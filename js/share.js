@@ -3,7 +3,7 @@ import {
   formatTimeBR,
   greetingSP,
   getZonedParts,
-} from './datetime.js';
+} from './datetime.js?v=1.0.2';
 
 const pad = (value) => String(value).padStart(2, '0');
 

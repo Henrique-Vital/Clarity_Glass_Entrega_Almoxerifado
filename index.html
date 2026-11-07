@@ -15,11 +15,11 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=1.0.2">
 
   <script defer src="assets/vendor/jspdf.umd.min.js"></script>
   <script defer src="assets/vendor/jspdf.plugin.autotable.min.js"></script>
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/app.js?v=1.0.2"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Pular para o conteúdo</a>
@@ -256,6 +256,12 @@
       </section>
 
       <section class="panel">
+        <h2>Atualização</h2>
+        <p>Se uma alteração recente não aparecer, force o download da versão mais recente. Seus registros não são apagados.</p>
+        <button type="button" id="force-update" class="btn btn-outline btn-block">🔄 Atualizar aplicativo</button>
+      </section>
+
+      <section class="panel">
         <h2>Backup dos dados</h2>
         <p>Os registros ficam <strong>somente neste aparelho</strong>. Se trocar de celular, limpar o navegador ou desinstalar o app, os dados podem ser perdidos. Exporte um backup com regularidade.</p>
         <button type="button" id="export-backup" class="btn btn-outline btn-block">⬇️ Exportar backup (JSON)</button>
@@ -272,7 +278,7 @@
 
       <section class="panel about-panel">
         <h2>Sobre</h2>
-        <p>Portaria Clarity Glass · versão 1.0.1</p>
+        <p>Portaria Clarity Glass · versão 1.0.2</p>
         <p class="hint">Sistema local, sem login e sem servidor. As fotos não são armazenadas: são usadas apenas no momento do envio e descartadas em seguida.</p>
       </section>
     </section>

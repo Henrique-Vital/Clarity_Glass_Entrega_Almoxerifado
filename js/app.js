@@ -1,4 +1,4 @@
-import * as db from './db.js';
+import * as db from './db.js?v=1.0.2';
 import {
   formatDateBR,
   formatTimeBR,
@@ -9,7 +9,7 @@ import {
   fromDatetimeLocalValue,
   getPeriodRange,
   toDateInputValue,
-} from './datetime.js';
+} from './datetime.js?v=1.0.2';
 import {
   compressImage,
   photoFileName,
@@ -26,8 +26,8 @@ import {
   normalizeWhatsAppNumber,
   isValidWhatsAppNumber,
   formatPhoneDisplay,
-} from './share.js';
-import { generateReportPdf } from './pdf.js';
+} from './share.js?v=1.0.2';
+import { generateReportPdf } from './pdf.js?v=1.0.2';
 
 const CONFIG_KEY = 'portaria-clarity:config';
 const DEFAULT_CONFIG = Object.freeze({
@@ -1374,6 +1374,31 @@ function bindSettings() {
     }
     state.installPrompt = null;
     $('#install-app').hidden = true;
+  });
+
+  $('#force-update').addEventListener('click', async () => {
+    const confirmed = await confirmDialog({
+      title: 'Atualizar aplicativo?',
+      message:
+        'O app vai remover o cache antigo e baixar a versão mais recente. Seus registros não serão apagados.',
+      confirmLabel: 'Atualizar agora',
+    });
+    if (!confirmed) return;
+
+    try {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      }
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
+      }
+      window.location.replace(`./?atualizar=${Date.now()}`);
+    } catch (error) {
+      showToast('Não foi possível forçar a atualização.', 'error');
+      console.error(error);
+    }
   });
 
   $('#export-backup').addEventListener('click', async () => {

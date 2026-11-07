@@ -200,9 +200,10 @@ Para adotar uma dessas opções seria necessário criar um backend, guardar o to
 
 ## Atualização e cache
 
-- Ao alterar CSS, JavaScript, ícones ou vendor, **incremente `CACHE_NAME` em `sw.js`**, a `version` em `package.json` e a versão exibida em **Sobre** no `index.html`.
-- O novo service worker chama `skipWaiting()` e `clients.claim()`. Pode ser necessário fechar e reabrir o app uma vez.
-- A navegação é network-first; os demais arquivos são cache-first. Sem o incremento do cache, usuários existentes podem continuar recebendo os arquivos antigos.
+- Ao alterar CSS, JavaScript, ícones ou vendor, **incremente `CACHE_NAME` em `sw.js`**, a `version` em `package.json`, a versão exibida em **Sobre** no `index.html` e o parâmetro `?v=` usado no CSS, no `app.js`, nos imports dos módulos e no `APP_SHELL` do `sw.js`.
+- O novo service worker chama `skipWaiting()` e `clients.claim()`. O app também recarrega quando uma nova versão assume o controle.
+- A navegação é network-first com bypass do cache HTTP; os demais arquivos são cache-first. O parâmetro `?v=` garante que uma versão nova não seja servida pelo cache antigo.
+- Se uma alteração não aparecer em um aparelho já instalado, use **Configurações > Atualização > Atualizar aplicativo**. Isso remove o cache e o service worker antigos e recarrega a versão mais recente **sem apagar os registros**.
 
 ## Checklist de testes
 

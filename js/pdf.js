@@ -1,4 +1,4 @@
-import { formatDateBR, formatTimeBR, toDateInputValue } from './datetime.js';
+import { formatDateBR, formatTimeBR, toDateInputValue } from './datetime.js?v=1.0.2';
 
 export function generateReportPdf({ records, periodLabel, generatedAt = new Date() }) {
   const jsPDFConstructor = window.jspdf && window.jspdf.jsPDF;

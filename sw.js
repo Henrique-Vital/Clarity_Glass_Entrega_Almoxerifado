@@ -1,15 +1,15 @@
-const CACHE_NAME = 'portaria-clarity-v1.0.1';
+const CACHE_NAME = 'portaria-clarity-v1.0.2';
 
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/styles.css',
-  './js/app.js',
-  './js/db.js',
-  './js/datetime.js',
-  './js/share.js',
-  './js/pdf.js',
+  './css/styles.css?v=1.0.2',
+  './js/app.js?v=1.0.2',
+  './js/db.js?v=1.0.2',
+  './js/datetime.js?v=1.0.2',
+  './js/share.js?v=1.0.2',
+  './js/pdf.js?v=1.0.2',
   './assets/vendor/jspdf.umd.min.js',
   './assets/vendor/jspdf.plugin.autotable.min.js',
   './assets/icons/icon-192.png',
@@ -50,7 +50,7 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'reload' })
         .then((response) => {
           if (response && response.ok) {
             const copy = response.clone();
