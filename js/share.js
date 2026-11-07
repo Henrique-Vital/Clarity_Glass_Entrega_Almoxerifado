@@ -100,10 +100,7 @@ export function buildMessageNF(record) {
   const observacao = String(record.observacao || '').trim();
   if (observacao) lines.push(`📝 *Obs.:* ${observacao}`);
 
-  lines.push(
-    '',
-    'O material está aqui na portaria. Quando puderem, venham retirar. Obrigado!'
-  );
+  lines.push('', 'O entregador está aguardando na portaria principal. Obrigado!');
   return lines.join('\n');
 }
 
