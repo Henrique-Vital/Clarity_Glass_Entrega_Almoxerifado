@@ -1,0 +1,50 @@
+{
+  "name": "Portaria Clarity Glass",
+  "short_name": "Portaria CG",
+  "description": "Registro rápido de chegada de materiais na portaria da Clarity Glass, com aviso ao almoxarifado pelo WhatsApp.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef3f8",
+  "theme_color": "#0b4f8a",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Material com nota fiscal",
+      "short_name": "Com NF",
+      "description": "Registrar a chegada de material com nota fiscal",
+      "url": "./#/nova-nf",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Material sem nota fiscal",
+      "short_name": "Sem NF",
+      "description": "Avisar sobre encomenda dos Correios/Sedex",
+      "url": "./#/sem-nf",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

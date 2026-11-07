@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Portaria Clarity Glass</title>
+  <meta name="description" content="Registro rápido de chegada de materiais na portaria da Clarity Glass, com aviso ao almoxerifado pelo WhatsApp.">
+  <meta name="theme-color" content="#0b4f8a">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Portaria CG">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script defer src="assets/vendor/jspdf.umd.min.js"></script>
+  <script defer src="assets/vendor/jspdf.plugin.autotable.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="Ir para a tela inicial">
+      <img class="brand-logo" src="assets/icons/icon-192.png" alt="" width="40" height="40">
+      <span class="brand-text">
+        <strong>Clarity Glass</strong>
+        <small>Portaria</small>
+      </span>
+    </a>
+    <nav class="topbar-actions" aria-label="Atalhos">
+      <a class="icon-btn" href="#/relatorio" id="nav-relatorio" aria-label="Abrir relatório" title="Relatório">📊</a>
+      <a class="icon-btn" href="#/config" id="nav-config" aria-label="Abrir configurações" title="Configurações">⚙️</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- ================= TELA INICIAL ================= -->
+    <section class="view" id="view-home" aria-labelledby="home-title">
+      <div class="home-hero">
+        <p class="eyebrow" id="home-clock">Carregando data e hora…</p>
+        <h1 id="home-title">Chegou material?</h1>
+        <p class="subtitle">Registre em poucos toques e avise o almoxarifado.</p>
+      </div>
+
+      <div class="entry-actions">
+        <a href="#/nova-nf" class="entry-btn entry-btn-primary">
+          <span class="entry-icon" aria-hidden="true">📄</span>
+          <span class="entry-label">Material <strong>COM</strong> nota fiscal</span>
+          <span class="entry-hint">Registrar entrada e avisar</span>
+        </a>
+        <a href="#/sem-nf" class="entry-btn entry-btn-secondary">
+          <span class="entry-icon" aria-hidden="true">📦</span>
+          <span class="entry-label">Material <strong>SEM</strong> nota fiscal</span>
+          <span class="entry-hint">Correios / Sedex</span>
+        </a>
+      </div>
+
+      <section class="panel pending-panel" aria-labelledby="pending-title">
+        <div class="section-head">
+          <h2 id="pending-title">Aguardando retirada</h2>
+          <span class="badge" id="pending-count" aria-label="Quantidade aguardando retirada">0</span>
+        </div>
+        <div id="pending-list" class="pending-list">
+          <p class="empty-state">Nenhum material aguardando retirada.</p>
+        </div>
+      </section>
+
+      <a href="#/relatorio" class="btn btn-outline btn-block home-report">📊 Relatório</a>
+    </section>
+
+    <!-- ================= FLUXO A: COM NF ================= -->
+    <section class="view" id="view-nova-nf" aria-labelledby="nf-title" hidden>
+      <a class="back-link" href="#/">← Voltar</a>
+      <h1 id="nf-title">Material com nota fiscal</h1>
+      <p class="subtitle">A data e a hora de entrada são registradas automaticamente.</p>
+
+      <form id="form-nf" novalidate>
+        <div class="field">
+          <span class="label">Foto do material <span class="optional">(recomendado)</span></span>
+          <div class="photo-box" id="nf-photo-box">
+            <button type="button" class="photo-trigger" id="nf-photo-trigger">
+              <span class="photo-icon" aria-hidden="true">📷</span>
+              <span>Tirar foto</span>
+              <small>Abre a câmera traseira</small>
+            </button>
+            <img id="nf-photo-preview" class="photo-preview" alt="Pré-visualização da foto do material" hidden>
+          </div>
+          <div class="photo-actions" id="nf-photo-actions" hidden>
+            <button type="button" class="btn btn-outline btn-sm" id="nf-photo-redo">📷 Refazer</button>
+            <button type="button" class="btn btn-danger-outline btn-sm" id="nf-photo-remove">🗑️ Remover</button>
+          </div>
+          <p class="hint">A foto não é salva no sistema. Ela é usada apenas no envio.</p>
+          <input type="file" id="nf-foto" accept="image/*" capture="environment" hidden>
+          <p class="field-error" id="nf-foto-error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="nf-fornecedor" class="label">Fornecedor <span class="req">*</span></label>
+          <input id="nf-fornecedor" name="fornecedor" type="text" autocomplete="off"
+                 list="fornecedores-list" placeholder="Nome do fornecedor" maxlength="120"
+                 enterkeyhint="next" required>
+          <datalist id="fornecedores-list"></datalist>
+          <div class="quick-chips" id="fornecedores-recentes" hidden aria-label="Fornecedores recentes"></div>
+          <p class="field-error" id="nf-fornecedor-error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="nf-numero" class="label">Número da nota fiscal <span class="req">*</span></label>
+          <input id="nf-numero" name="numeroNF" type="text" inputmode="numeric" autocomplete="off"
+                 placeholder="Ex.: 12345" maxlength="40" enterkeyhint="next" required>
+          <p class="field-error" id="nf-numero-error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="nf-obs" class="label">Observação <span class="optional">(opcional)</span></label>
+          <textarea id="nf-obs" name="observacao" rows="3" maxlength="500"
+                    placeholder="Ex.: 3 volumes, caixa avariada, material pesado…"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-xl btn-block" id="nf-submit">ENVIAR</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= FLUXO B: SEM NF ================= -->
+    <section class="view" id="view-sem-nf" aria-labelledby="sem-nf-title" hidden>
+      <a class="back-link" href="#/">← Voltar</a>
+      <h1 id="sem-nf-title">Material sem nota fiscal</h1>
+      <p class="subtitle">Correios / Sedex. Este aviso não entra no relatório.</p>
+
+      <form id="form-sem-nf" novalidate>
+        <div class="field">
+          <span class="label">Foto da encomenda <span class="req">*</span></span>
+          <div class="photo-box" id="sem-nf-photo-box">
+            <button type="button" class="photo-trigger" id="sem-nf-photo-trigger">
+              <span class="photo-icon" aria-hidden="true">📷</span>
+              <span>Tirar foto</span>
+              <small>Abre a câmera traseira</small>
+            </button>
+            <img id="sem-nf-photo-preview" class="photo-preview" alt="Pré-visualização da encomenda" hidden>
+          </div>
+          <div class="photo-actions" id="sem-nf-photo-actions" hidden>
+            <button type="button" class="btn btn-outline btn-sm" id="sem-nf-photo-redo">📷 Refazer</button>
+            <button type="button" class="btn btn-danger-outline btn-sm" id="sem-nf-photo-remove">🗑️ Remover</button>
+          </div>
+          <p class="hint">A foto não é salva no sistema. Ela é usada apenas no envio.</p>
+          <input type="file" id="sem-nf-foto" accept="image/*" capture="environment" hidden>
+          <p class="field-error" id="sem-nf-foto-error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="sem-nf-obs" class="label">Observação <span class="optional">(opcional)</span></label>
+          <textarea id="sem-nf-obs" rows="3" maxlength="500"
+                    placeholder="Ex.: caixa pequena, envelope, volume frágil…"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-xl btn-block" id="sem-nf-submit">ENVIAR</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================= RELATÓRIO ================= -->
+    <section class="view" id="view-relatorio" aria-labelledby="report-title" hidden>
+      <a class="back-link" href="#/">← Voltar</a>
+      <h1 id="report-title">Relatório</h1>
+      <p class="subtitle">Materiais com nota fiscal recebidos na portaria.</p>
+
+      <div class="filter-chips" id="report-filters" role="group" aria-label="Filtrar por período">
+        <button type="button" class="chip is-active" data-filter="hoje">Hoje</button>
+        <button type="button" class="chip" data-filter="ontem">Ontem</button>
+        <button type="button" class="chip" data-filter="ultimos7">Últimos 7 dias</button>
+        <button type="button" class="chip" data-filter="mes">Mês atual</button>
+        <button type="button" class="chip" data-filter="personalizado">Personalizado</button>
+      </div>
+
+      <div class="custom-range panel" id="custom-range" hidden>
+        <div class="field">
+          <label for="report-start" class="label">Data inicial</label>
+          <input type="date" id="report-start">
+        </div>
+        <div class="field">
+          <label for="report-end" class="label">Data final</label>
+          <input type="date" id="report-end">
+        </div>
+        <button type="button" class="btn btn-primary btn-block" id="apply-custom">Aplicar período</button>
+      </div>
+
+      <p class="report-period" id="report-period"></p>
+      <p class="report-summary" id="report-summary"></p>
+
+      <div class="table-wrap" id="report-table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th scope="col">Data</th>
+              <th scope="col">Fornecedor</th>
+              <th scope="col">Nota Fiscal</th>
+              <th scope="col">Entrada</th>
+              <th scope="col">Saída</th>
+              <th scope="col">Observação</th>
+              <th scope="col"><span class="sr-only">Ações</span></th>
+            </tr>
+          </thead>
+          <tbody id="report-body"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="report-empty" hidden>
+        <p>Nenhum registro encontrado neste período.</p>
+      </div>
+
+      <div class="report-actions">
+        <button type="button" class="btn btn-primary btn-block" id="pdf-share">📄 Gerar PDF e enviar</button>
+        <button type="button" class="btn btn-outline btn-block" id="pdf-download">⬇️ Baixar PDF</button>
+      </div>
+    </section>
+
+    <!-- ================= CONFIGURAÇÕES ================= -->
+    <section class="view" id="view-config" aria-labelledby="config-title" hidden>
+      <a class="back-link" href="#/">← Voltar</a>
+      <h1 id="config-title">Configurações</h1>
+
+      <form id="form-config" novalidate>
+        <fieldset class="panel">
+          <legend>Destino do aviso</legend>
+          <div class="field">
+            <label for="cfg-numero" class="label">Número do WhatsApp</label>
+            <input type="tel" id="cfg-numero" inputmode="tel" autocomplete="off"
+                   placeholder="5512988990837" maxlength="20">
+            <p class="hint">Somente números, com DDI e DDD. Ex.: 5512988990837.</p>
+            <p class="field-error" id="cfg-numero-error" role="alert" hidden></p>
+          </div>
+          <div class="field">
+            <label for="cfg-grupo" class="label">Nome do grupo</label>
+            <input type="text" id="cfg-grupo" maxlength="120"
+                   placeholder="Portaria principal e dos fundos Clarity">
+            <p class="hint">O grupo não pode ser escolhido automaticamente. Ao compartilhar, selecione-o no WhatsApp.</p>
+            <p class="field-error" id="cfg-grupo-error" role="alert" hidden></p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Salvar configurações</button>
+        </fieldset>
+      </form>
+
+      <section class="panel">
+        <h2>Instalar no celular</h2>
+        <p>Instale o app na tela inicial para abrir mais rápido e usar offline.</p>
+        <button type="button" id="install-app" class="btn btn-outline btn-block" hidden>📲 Instalar aplicativo</button>
+        <p class="hint">Android (Chrome): menu ⋮ &gt; “Instalar app” ou “Adicionar à tela inicial”.<br>
+          iPhone (Safari): botão Compartilhar &gt; “Adicionar à Tela de Início”.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Backup dos dados</h2>
+        <p>Os registros ficam <strong>somente neste aparelho</strong>. Se trocar de celular, limpar o navegador ou desinstalar o app, os dados podem ser perdidos. Exporte um backup com regularidade.</p>
+        <button type="button" id="export-backup" class="btn btn-outline btn-block">⬇️ Exportar backup (JSON)</button>
+        <label class="btn btn-outline btn-block file-label" for="import-backup">⬆️ Importar backup (JSON)
+          <input type="file" id="import-backup" accept="application/json,.json" hidden>
+        </label>
+      </section>
+
+      <section class="panel danger-zone">
+        <h2>Apagar dados</h2>
+        <p>Remove todos os registros deste aparelho. Esta ação não pode ser desfeita. Exporte um backup antes.</p>
+        <button type="button" id="clear-data" class="btn btn-danger-outline btn-block">🗑️ Apagar todos os registros</button>
+      </section>
+
+      <section class="panel about-panel">
+        <h2>Sobre</h2>
+        <p>Portaria Clarity Glass · versão 1.0.0</p>
+        <p class="hint">Sistema local, sem login e sem servidor. As fotos não são armazenadas: são usadas apenas no momento do envio e descartadas em seguida.</p>
+      </section>
+    </section>
+  </main>
+
+  <div id="modal-root"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

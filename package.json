@@ -1,0 +1,10 @@
+{
+  "name": "portaria-clarity-glass",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PWA mobile-first para registro de chegada de materiais na portaria da Clarity Glass.",
+  "scripts": {
+    "start": "npx --yes serve . -l 8080"
+  }
+}
